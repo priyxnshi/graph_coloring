@@ -1,0 +1,45 @@
+Feature1,Feature2,Correlation
+mean radius,mean perimeter,0.9978552814938096
+mean radius,mean area,0.9873571700566122
+mean radius,mean concave points,0.8225285223871794
+mean radius,worst radius,0.9695389726112066
+mean radius,worst perimeter,0.9651365139559874
+mean radius,worst area,0.9410824595860466
+mean texture,worst texture,0.9120445888404212
+mean perimeter,mean area,0.9865068039913902
+mean perimeter,mean concave points,0.850977041252819
+mean perimeter,worst radius,0.9694763634663136
+mean perimeter,worst perimeter,0.9703868870426388
+mean perimeter,worst area,0.9415498080023066
+mean area,mean concave points,0.8232688686524328
+mean area,area error,0.8000859212343219
+mean area,worst radius,0.9627460860470832
+mean area,worst perimeter,0.9591195743552648
+mean area,worst area,0.9592133256499004
+mean smoothness,worst smoothness,0.8053241954943621
+mean compactness,mean concavity,0.8831206701772505
+mean compactness,mean concave points,0.8311350431336991
+mean compactness,worst compactness,0.8658090398022631
+mean compactness,worst concavity,0.8162752498000299
+mean compactness,worst concave points,0.8155732235690637
+mean concavity,mean concave points,0.921391026378858
+mean concavity,worst concavity,0.8841026390943829
+mean concavity,worst concave points,0.8613230336379508
+mean concave points,worst radius,0.8303176311186148
+mean concave points,worst perimeter,0.8559231281343109
+mean concave points,worst area,0.8096296199096181
+mean concave points,worst concave points,0.9101553142985928
+radius error,perimeter error,0.9727936770160756
+radius error,area error,0.9518301121109908
+perimeter error,area error,0.9376554069544162
+area error,worst area,0.8114079609317282
+compactness error,concavity error,0.8012683427383291
+compactness error,fractal dimension error,0.803268817661768
+worst radius,worst perimeter,0.9937079161029492
+worst radius,worst area,0.9840145644590724
+worst perimeter,worst area,0.9775780914063872
+worst perimeter,worst concave points,0.8163221016875443
+worst compactness,worst concavity,0.8922608987764685
+worst compactness,worst concave points,0.8010803646352529
+worst compactness,worst fractal dimension,0.8104548563116125
+worst concavity,worst concave points,0.8554338603439992
