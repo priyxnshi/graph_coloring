@@ -1,0 +1,31 @@
+Feature,Color
+mean radius,0
+mean texture,0
+mean perimeter,1
+mean area,2
+mean smoothness,0
+mean compactness,0
+mean concavity,1
+mean concave points,3
+mean symmetry,0
+mean fractal dimension,0
+radius error,0
+texture error,0
+perimeter error,1
+area error,3
+smoothness error,0
+compactness error,0
+concavity error,1
+concave points error,0
+symmetry error,0
+fractal dimension error,1
+worst radius,4
+worst texture,1
+worst perimeter,5
+worst area,6
+worst smoothness,1
+worst compactness,1
+worst concavity,2
+worst concave points,4
+worst symmetry,0
+worst fractal dimension,0

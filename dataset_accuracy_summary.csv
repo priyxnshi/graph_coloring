@@ -1,0 +1,4 @@
+Dataset,Accuracy
+Backtracking,0.9714912280701755
+Greedy,0.9802631578947368
+Original,0.956140350877193
