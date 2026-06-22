@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graph Coloring Feature Selection Dashboard</title>
+    
+    <!-- Google Fonts: Outfit & Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Vis.js Standalone for Interactive Network Graph -->
+    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    
+    <!-- ApexCharts for Modern Interactive Heatmaps and Charts -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    
+    <!-- Vanilla CSS Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="hidden">
+        <div class="loader-content">
+            <div class="spinner"></div>
+            <h3>Running Optimization Pipeline...</h3>
+            <p id="loading-step">Preprocessing dataset...</p>
+        </div>
+    </div>
+
+    <!-- Main App Container -->
+    <div class="app-container">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-icon">
+                    <i class="fa-solid fa-circle-nodes"></i>
+                </div>
+                <div>
+                    <h2>ConflictFree</h2>
+                    <p>Feature Selection Engine</p>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <ul>
+                    <li>
+                        <a href="#landing" class="nav-item active" data-tab="landing">
+                            <i class="fa-solid fa-house"></i>
+                            <span>Overview</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#upload" class="nav-item locked" data-tab="upload" id="nav-upload">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                            <span>Dataset Upload</span>
+                            <i class="fa-solid fa-lock lock-icon"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#correlation" class="nav-item locked" data-tab="correlation" id="nav-correlation">
+                            <i class="fa-solid fa-chart-grid"></i>
+                            <i class="fa-solid fa-circle-half-stroke"></i>
+                            <span>Correlation</span>
+                            <i class="fa-solid fa-lock lock-icon"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#graph" class="nav-item locked" data-tab="graph" id="nav-graph">
+                            <i class="fa-solid fa-diagram-project"></i>
+                            <span>Conflict Graph</span>
+                            <i class="fa-solid fa-lock lock-icon"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#coloring" class="nav-item locked" data-tab="coloring" id="nav-coloring">
+                            <i class="fa-solid fa-palette"></i>
+                            <span>Coloring Results</span>
+                            <i class="fa-solid fa-lock lock-icon"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#comparison" class="nav-item locked" data-tab="comparison" id="nav-comparison">
+                            <i class="fa-solid fa-code-compare"></i>
+                            <span>Algorithm Comp</span>
+                            <i class="fa-solid fa-lock lock-icon"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#results" class="nav-item locked" data-tab="results" id="nav-results">
+                            <i class="fa-solid fa-chart-line"></i>
+                            <span>ML Evaluation</span>
+                            <i class="fa-solid fa-lock lock-icon"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="theme-badge">
+                    <i class="fa-solid fa-sun text-amber"></i>
+                    <span>Light Mode Active</span>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Main Content Area -->
+        <main class="main-content">
+            
+            <!-- Landing Page Section -->
+            <section id="tab-landing" class="tab-pane active">
+                <div class="landing-hero">
+                    <div class="floating-shapes">
+                        <div class="shape shape-1"></div>
+                        <div class="shape shape-2"></div>
+                        <div class="shape shape-3"></div>
+                    </div>
+                    
+                    <div class="hero-content">
+                        <span class="badge badge-primary">Graph Theory + Machine Learning</span>
+                        <h1 class="hero-title">Graph Coloring Optimization for Conflict-Free Assignment</h1>
+                        <p class="hero-subtitle">
+                            Eliminate feature redundancy and multi-collinearity using advanced graph coloring. Select optimal representational features to boost ML classification performance and reduce dimensionality.
+                        </p>
+                        
+                        <div class="hero-actions">
+                            <button class="btn btn-primary btn-lg" onclick="activatePipeline()">
+                                Start Analysis <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                            <a href="#upload" class="btn btn-secondary btn-lg" onclick="loadDefaultAndGo()">
+                                Use Breast Cancer Dataset
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Decorative Graphic -->
+                    <div class="hero-visual">
+                        <div class="visual-node-graph">
+                            <!-- SVG Decorative Graph -->
+                            <svg width="100%" height="100%" viewBox="0 0 400 400">
+                                <defs>
+                                    <linearGradient id="grad-blue" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#60A5FA;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#3B82F6;stop-opacity:1" />
+                                    </linearGradient>
+                                    <linearGradient id="grad-lavender" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#C4B5FD;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#8B5CF6;stop-opacity:1" />
+                                    </linearGradient>
+                                    <linearGradient id="grad-mint" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#A7F3D0;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#10B981;stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                                <line x1="80" y1="120" x2="200" y2="80" stroke="#E2E8F0" stroke-width="2" />
+                                <line x1="200" y1="80" x2="320" y2="150" stroke="#E2E8F0" stroke-width="2" />
+                                <line x1="320" y1="150" x2="280" y2="300" stroke="#E2E8F0" stroke-width="2" />
+                                <line x1="280" y1="300" x2="120" y2="320" stroke="#E2E8F0" stroke-width="2" />
+                                <line x1="120" y1="320" x2="80" y2="120" stroke="#E2E8F0" stroke-width="2" />
+                                <line x1="200" y1="80" x2="200" y2="220" stroke="#E2E8F0" stroke-width="2" />
+                                <line x1="80" y1="120" x2="200" y2="220" stroke="#E2E8F0" stroke-width="2" />
+                                <line x1="320" y1="150" x2="200" y2="220" stroke="#E2E8F0" stroke-width="2" />
+                                <line x1="280" y1="300" x2="200" y2="220" stroke="#E2E8F0" stroke-width="2" />
+                                <line x1="120" y1="320" x2="200" y2="220" stroke="#E2E8F0" stroke-width="2" />
+                                
+                                <circle cx="80" cy="120" r="16" fill="url(#grad-blue)" class="pulse-node" />
+                                <circle cx="200" cy="80" r="22" fill="url(#grad-lavender)" />
+                                <circle cx="320" cy="150" r="18" fill="url(#grad-mint)" />
+                                <circle cx="280" cy="300" r="20" fill="url(#grad-blue)" />
+                                <circle cx="120" cy="320" r="15" fill="url(#grad-lavender)" />
+                                <circle cx="200" cy="220" r="25" fill="url(#grad-mint)" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Dataset Upload Section -->
+            <section id="tab-upload" class="tab-pane">
+                <div class="section-header">
+                    <h2>Dataset Upload</h2>
+                    <p>Load your feature dataset to construct the conflict graph based on correlation values.</p>
+                </div>
+                
+                <div class="grid grid-2">
+                    <!-- Upload Dropzone Card -->
+                    <div class="card glassmorphism-card text-center p-6">
+                        <div id="dropzone" class="dropzone-area">
+                            <i class="fa-solid fa-file-csv upload-icon"></i>
+                            <h3>Drag & Drop CSV File Here</h3>
+                            <p>or click to browse your local filesystem</p>
+                            <input type="file" id="csv-file-input" accept=".csv" class="hidden">
+                            <div class="divider"><span>OR</span></div>
+                            <button class="btn btn-secondary" onclick="loadDefaultDataset()">
+                                Load Default Breast Cancer Dataset
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Dataset Info Stats -->
+                    <div class="card glassmorphism-card p-6" id="dataset-info-card">
+                        <div class="placeholder-content">
+                            <i class="fa-solid fa-database placeholder-icon"></i>
+                            <p>No dataset loaded. Upload a CSV or select the default dataset to view statistics.</p>
+                        </div>
+                        
+                        <div class="dataset-stats-display hidden">
+                            <h3 class="card-title">Dataset Summary</h3>
+                            <div class="stats-grid">
+                                <div class="stat-box">
+                                    <div class="stat-icon icon-blue">
+                                        <i class="fa-solid fa-users"></i>
+                                    </div>
+                                    <div class="stat-info">
+                                        <h4 id="stat-samples">-</h4>
+                                        <p>Samples (Rows)</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="stat-box">
+                                    <div class="stat-icon icon-lavender">
+                                        <i class="fa-solid fa-bars-staggered"></i>
+                                    </div>
+                                    <div class="stat-info">
+                                        <h4 id="stat-features">-</h4>
+                                        <p>Features (Columns)</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="stat-box">
+                                    <div class="stat-icon icon-mint">
+                                        <i class="fa-solid fa-circle-exclamation"></i>
+                                    </div>
+                                    <div class="stat-info">
+                                        <h4 id="stat-missing">-</h4>
+                                        <p>Missing Values</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <h4 class="sub-title">Feature Fields List (<span id="features-count-badge">0</span>)</h4>
+                            <div class="feature-pills-container" id="feature-pills-list">
+                                <!-- Pills populated dynamically -->
+                            </div>
+                            
+                            <div class="card-action mt-6 text-right">
+                                <button class="btn btn-primary" id="btn-goto-correlation" onclick="runAnalysisPipeline()">
+                                    Proceed to Correlation <i class="fa-solid fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Correlation Analysis Section -->
+            <section id="tab-correlation" class="tab-pane">
+                <div class="section-header">
+                    <h2>Correlation Analysis</h2>
+                    <p>Calculate absolute correlation coefficients between features. Redundant pairs exceeding the threshold constitute graph conflicts.</p>
+                </div>
+                
+                <div class="grid grid-3 mb-6">
+                    <div class="card glassmorphism-card p-5 stat-box-premium">
+                        <i class="fa-solid fa-list-check premium-box-icon text-blue"></i>
+                        <div>
+                            <h4 id="corr-stat-total-features">-</h4>
+                            <p>Total Feature Nodes</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card glassmorphism-card p-5 stat-box-premium">
+                        <i class="fa-solid fa-circle-nodes premium-box-icon text-lavender"></i>
+                        <div>
+                            <h4 id="corr-stat-conflicts-found">-</h4>
+                            <p>Conflict Pairs Extracted</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card glassmorphism-card p-5 stat-box-premium">
+                        <i class="fa-solid fa-bolt premium-box-icon text-mint"></i>
+                        <div>
+                            <h4 id="corr-stat-strongest-pair" class="small-text">-</h4>
+                            <p>Strongest Correlation Pair</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="grid grid-4-1">
+                    <!-- Heatmap Card -->
+                    <div class="card glassmorphism-card p-6">
+                        <h3 class="card-title">Interactive Feature Correlation Heatmap</h3>
+                        <p class="card-subtitle mb-4">Hover over cells to examine details of specific feature pairwise coefficients.</p>
+                        <div class="heatmap-wrapper">
+                            <div id="correlation-heatmap-container"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Controls Sidebar -->
+                    <div class="flex flex-column gap-6">
+                        <!-- Slider Control -->
+                        <div class="card glassmorphism-card p-6 flex flex-column gap-4">
+                            <h3 class="card-title">Conflict Settings</h3>
+                            <div class="slider-control">
+                                <label for="threshold-slider" class="flex justify-between">
+                                    <span>Correlation Threshold</span>
+                                    <strong id="threshold-val">0.80</strong>
+                                </label>
+                                <input type="range" id="threshold-slider" min="0.50" max="0.95" step="0.05" value="0.80" class="slider">
+                                <span class="slider-hints flex justify-between">
+                                    <span>0.50 (Loose)</span>
+                                    <span>0.95 (Strict)</span>
+                                </span>
+                            </div>
+                            <button class="btn btn-primary w-full mt-4" onclick="runAnalysisPipeline()">
+                                <i class="fa-solid fa-play"></i> Recalculate Conflict Graph
+                            </button>
+                        </div>
+                        
+                        <!-- List Preview of Conflicts -->
+                        <div class="card glassmorphism-card p-6 flex-grow flex flex-column">
+                            <h3 class="card-title">Conflict Pairs List</h3>
+                            <div class="conflicts-table-container scrollable flex-grow">
+                                <table class="table" id="conflicts-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Feature A</th>
+                                            <th>Feature B</th>
+                                            <th>Corr</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="conflicts-table-body">
+                                        <!-- Populated dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Feature Conflict Graph Section -->
+            <section id="tab-graph" class="tab-pane">
+                <div class="section-header">
+                    <h2>Feature Conflict Graph</h2>
+                    <p>Features are represented as graph nodes, and conflict connections (correlation &gt; threshold) are modeled as edges.</p>
+                </div>
+                
+                <div class="grid grid-1-4">
+                    <!-- Graph Stats Sidebar -->
+                    <div class="flex flex-column gap-6">
+                        <div class="card glassmorphism-card p-6">
+                            <h3 class="card-title">Graph Properties</h3>
+                            <ul class="stats-list mt-4">
+                                <li class="flex justify-between py-2 border-b">
+                                    <span class="text-gray"><i class="fa-solid fa-circle text-blue mr-2"></i>Nodes (Features)</span>
+                                    <strong id="graph-stat-nodes">-</strong>
+                                </li>
+                                <li class="flex justify-between py-2 border-b">
+                                    <span class="text-gray"><i class="fa-solid fa-share-nodes text-lavender mr-2"></i>Edges (Conflicts)</span>
+                                    <strong id="graph-stat-edges">-</strong>
+                                </li>
+                                <li class="flex justify-between py-2 border-b">
+                                    <span class="text-gray"><i class="fa-solid fa-expand text-mint mr-2"></i>Graph Density</span>
+                                    <strong id="graph-stat-density">-</strong>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="card glassmorphism-card p-6 flex flex-column gap-4">
+                            <h3 class="card-title">Visualization Controls</h3>
+                            
+                            <div class="control-group">
+                                <label class="label">Coloring Mode</label>
+                                <div class="radio-group flex flex-column gap-2">
+                                    <label class="radio-label">
+                                        <input type="radio" name="graph-color-mode" value="uncolored" checked onclick="updateGraphColors()">
+                                        <span>Uncolored (Standard)</span>
+                                    </label>
+                                    <label class="radio-label">
+                                        <input type="radio" name="graph-color-mode" value="greedy" onclick="updateGraphColors()">
+                                        <span>Greedy Coloring (Welsh-Powell)</span>
+                                    </label>
+                                    <label class="radio-label">
+                                        <input type="radio" name="graph-color-mode" value="backtracking" onclick="updateGraphColors()">
+                                        <span>Backtracking Coloring</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="divider"></div>
+                            
+                            <div class="control-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="physics-toggle" checked onclick="toggleGraphPhysics()">
+                                    <span>Enable Graph Physics</span>
+                                </label>
+                            </div>
+                            
+                            <button class="btn btn-secondary btn-sm w-full" onclick="fitNetwork()">
+                                <i class="fa-solid fa-compress"></i> Recenter Graph
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Vis.js Graph Canvas Container -->
+                    <div class="card glassmorphism-card p-6 relative flex flex-column">
+                        <div class="graph-legend flex justify-between align-center mb-2">
+                            <h3 class="card-title">Interactive Conflict Network Topology</h3>
+                            <div class="legend-pills flex gap-2" id="graph-legend-colors">
+                                <!-- Populated dynamically when colored mode is active -->
+                            </div>
+                        </div>
+                        <p class="card-subtitle mb-4">Click and drag nodes to restructure, zoom to inspect clusters, hover over edges to see correlation values.</p>
+                        <div id="vis-graph-container" class="flex-grow"></div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Graph Coloring Results Section -->
+            <section id="tab-coloring" class="tab-pane">
+                <div class="section-header">
+                    <h2>Graph Coloring & Feature Selection</h2>
+                    <p>Independent colors group features that do not conflict. The feature with the highest variance is selected per color group.</p>
+                </div>
+                
+                <div class="flex justify-between align-center mb-6">
+                    <div class="segmented-control" id="coloring-algo-tabs">
+                        <button class="tab-btn active" data-algo="greedy" onclick="switchColoringAlgo('greedy')">Greedy (Welsh-Powell)</button>
+                        <button class="tab-btn" data-algo="backtracking" onclick="switchColoringAlgo('backtracking')">Backtracking Search</button>
+                    </div>
+                    
+                    <div class="algo-meta-badges flex gap-4">
+                        <span class="badge badge-accent">Colors Used: <strong id="coloring-meta-colors">-</strong></span>
+                        <span class="badge badge-primary">Time Elapsed: <strong id="coloring-meta-time">-</strong></span>
+                    </div>
+                </div>
+                
+                <!-- Summary Card -->
+                <div class="card glassmorphism-card p-6 mb-6">
+                    <div class="grid grid-3 text-center">
+                        <div>
+                            <span class="text-gray text-sm">Chromatic Number (&chi;)</span>
+                            <h2 class="text-blue text-3xl font-bold mt-1" id="coloring-summary-chromatic">-</h2>
+                        </div>
+                        <div>
+                            <span class="text-gray text-sm">Selected Key Features</span>
+                            <h2 class="text-lavender text-3xl font-bold mt-1" id="coloring-summary-selected">-</h2>
+                        </div>
+                        <div>
+                            <span class="text-gray text-sm">Features Dismissed</span>
+                            <h2 class="text-red text-3xl font-bold mt-1" id="coloring-summary-dismissed">-</h2>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Color Group Cards Grid -->
+                <h3 class="card-title mb-4">Independent Color Subgroups</h3>
+                <div class="color-groups-grid grid grid-4" id="color-groups-container">
+                    <!-- Populated dynamically with color subgroup cards -->
+                </div>
+            </section>
+            
+            <!-- Algorithm Comparison Section -->
+            <section id="tab-comparison" class="tab-pane">
+                <div class="section-header">
+                    <h2>Heuristic vs. Exact Search</h2>
+                    <p>A side-by-side analysis of Welsh-Powell Greedy heuristic and exact backtracking execution efficiency.</p>
+                </div>
+                
+                <div class="grid grid-2 mb-6">
+                    <!-- Table Comparison Card -->
+                    <div class="card glassmorphism-card p-6">
+                        <h3 class="card-title">Metric Matrix</h3>
+                        <table class="table table-bordered mt-4">
+                            <thead>
+                                <tr>
+                                    <th>Algorithm</th>
+                                    <th>Chromatic Number (&chi;)</th>
+                                    <th>Exec Time (ms)</th>
+                                    <th>Algorithmic Complexity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Greedy (Welsh-Powell)</strong></td>
+                                    <td id="comp-greedy-colors" class="font-bold text-blue">-</td>
+                                    <td id="comp-greedy-time" class="text-blue">-</td>
+                                    <td>O(V + E) - Linear heuristic approximation</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Backtracking Search</strong></td>
+                                    <td id="comp-back-colors" class="font-bold text-lavender">-</td>
+                                    <td id="comp-back-time" class="text-lavender">-</td>
+                                    <td>O(m<sup>V</sup>) - Exponential depth-first search</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <div class="mt-6 p-4 bg-blue-light rounded">
+                            <h4 class="font-semibold text-blue-dark flex align-center gap-2">
+                                <i class="fa-solid fa-circle-info"></i> Performance Insight
+                            </h4>
+                            <p class="text-sm mt-2 text-blue-dark leading-relaxed" id="comp-insight-text">
+                                Welsh-Powell orders vertices by degree in descending order. Backtracking uses this order to accelerate domain pruning.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Comparison Charts Card -->
+                    <div class="card glassmorphism-card p-6 flex flex-column">
+                        <h3 class="card-title">Execution Speed Analysis</h3>
+                        <div class="flex-grow flex align-center justify-center">
+                            <div id="exec-time-chart" class="w-full"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="grid grid-2">
+                    <div class="card glassmorphism-card p-6">
+                        <h3 class="card-title">Coloring Efficiency Comparison</h3>
+                        <div id="colors-used-chart"></div>
+                    </div>
+                    
+                    <div class="card glassmorphism-card p-6">
+                        <h3 class="card-title">Algorithmic Methodologies</h3>
+                        <div class="timeline mt-4">
+                            <div class="timeline-item pb-4 border-l-2 pl-4 relative">
+                                <div class="timeline-dot"></div>
+                                <h4 class="font-semibold text-blue">Welsh-Powell Greedy Heuristic</h4>
+                                <p class="text-xs text-gray mt-1">Approximation Heuristic</p>
+                                <p class="text-sm mt-2 text-gray-dark leading-relaxed">
+                                    Sorts nodes by degree descending. Selects uncolored node, assigns the first available color, and assigns the same color to all independent nodes sequentially. Highly efficient, but doesn't guarantee a minimal coloring.
+                                </p>
+                            </div>
+                            <div class="timeline-item pl-4 relative mt-4">
+                                <div class="timeline-dot bg-lavender"></div>
+                                <h4 class="font-semibold text-lavender">Backtracking (Exact DFS)</h4>
+                                <p class="text-xs text-gray mt-1">Exact Combinatorial Optimization</p>
+                                <p class="text-sm mt-2 text-gray-dark leading-relaxed">
+                                    Explores the state space recursively. If a color conflict occurs, it retracts and tests alternative color mappings. Finds the optimal solution, but complexity grows exponentially.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Final Evaluation Results Section -->
+            <section id="tab-results" class="tab-pane">
+                <div class="section-header">
+                    <h2>Final Results Dashboard</h2>
+                    <p>Compare machine learning classifier accuracy, training speed, and feature reduction rates.</p>
+                </div>
+                
+                <!-- Performance Counters Grid -->
+                <div class="grid grid-4 mb-6">
+                    <div class="card glassmorphism-card p-5 flex align-center gap-4">
+                        <div class="radial-progress-container">
+                            <div class="radial-progress" id="reduction-radial" style="--value: 0;">
+                                <span id="reduction-radial-txt">0%</span>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 id="dash-reduction">-</h4>
+                            <p class="text-sm text-gray">Features Pruned</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card glassmorphism-card p-5 stat-box-premium">
+                        <i class="fa-solid fa-shield-halved premium-box-icon text-blue"></i>
+                        <div>
+                            <h4 id="dash-orig-acc">-</h4>
+                            <p>Original Avg Accuracy</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card glassmorphism-card p-5 stat-box-premium">
+                        <i class="fa-solid fa-award premium-box-icon text-lavender"></i>
+                        <div>
+                            <h4 id="dash-greedy-acc">-</h4>
+                            <p>Greedy Avg Accuracy</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card glassmorphism-card p-5 stat-box-premium" id="backtracking-stat-premium">
+                        <i class="fa-solid fa-chess-king premium-box-icon text-mint"></i>
+                        <div>
+                            <h4 id="dash-back-acc">-</h4>
+                            <p>Backtracking Avg Accuracy</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="grid grid-3-2 mb-6">
+                    <!-- ML Model Accuracy Comparison Chart -->
+                    <div class="card glassmorphism-card p-6">
+                        <h3 class="card-title">ML Classifier Accuracy Comparison</h3>
+                        <p class="card-subtitle mb-4">Accuracy before and after conflict-free feature selection.</p>
+                        <div id="ml-accuracy-chart"></div>
+                    </div>
+                    
+                    <!-- F1 Score Comparison Chart -->
+                    <div class="card glassmorphism-card p-6">
+                        <h3 class="card-title">F1 Score Comparison</h3>
+                        <p class="card-subtitle mb-4">Precision-Recall harmonic mean per model.</p>
+                        <div id="ml-f1-chart"></div>
+                    </div>
+                </div>
+                
+                <div class="grid grid-2">
+                    <!-- Training Time Chart -->
+                    <div class="card glassmorphism-card p-6">
+                        <h3 class="card-title">Model Fitting Speed (sec)</h3>
+                        <p class="card-subtitle mb-4">Comparison of model training times across datasets.</p>
+                        <div id="ml-time-chart"></div>
+                    </div>
+                    
+                    <!-- Recommendation Dashboard -->
+                    <div class="card glassmorphism-card p-6 flex flex-column gap-4" id="recommendation-card">
+                        <h3 class="card-title"><i class="fa-solid fa-wand-magic-sparkles text-amber"></i> Optimization Analysis</h3>
+                        
+                        <div class="recommendation-content mt-2 flex-grow">
+                            <div class="recommendation-badge-row flex gap-3 align-center mb-4">
+                                <span class="badge badge-accent">Optimal Path</span>
+                                <h4 id="reco-model-name" class="font-bold text-gray-dark">-</h4>
+                            </div>
+                            
+                            <ul class="reco-details flex flex-column gap-3 text-sm text-gray-dark">
+                                <li class="flex align-center gap-2">
+                                    <i class="fa-solid fa-check text-mint"></i>
+                                    <span>Dimensionality reduced from <strong id="reco-orig-features">-</strong> to <strong id="reco-sel-features">-</strong> features (<strong id="reco-reduction-percent">-</strong> reduction).</span>
+                                </li>
+                                <li class="flex align-center gap-2">
+                                    <i class="fa-solid fa-check text-mint"></i>
+                                    <span>Average prediction accuracy changed by <strong id="reco-accuracy-delta">-</strong>.</span>
+                                </li>
+                                <li class="flex align-center gap-2">
+                                    <i class="fa-solid fa-check text-mint"></i>
+                                    <span>Model fitting process is <strong id="reco-speedup-multiplier">-</strong> times faster on average.</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="divider"></div>
+                        
+                        <div class="flex gap-4">
+                            <button class="btn btn-secondary flex-grow" onclick="resetPipeline()">
+                                <i class="fa-solid fa-arrow-rotate-left"></i> Run Another Dataset
+                            </button>
+                            <a href="#landing" class="btn btn-primary flex-grow text-center" onclick="switchTab('landing')">
+                                <i class="fa-solid fa-house"></i> Return Home
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+        </main>
+        
+    </div>
+
+    <!-- Dashboard Client Logic -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
